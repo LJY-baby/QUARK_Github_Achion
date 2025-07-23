@@ -1,0 +1,32 @@
+name: Quark Auto Sign
+on:
+  schedule:
+    - cron: "0 0 * * *"   # 每天 UTC 0 点（北京时间 8 点）执行
+  workflow_dispatch:       # 允许手动触发
+
+jobs:
+  sign:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run sign script
+        env:
+          QUARK_COOKIE: ${{ secrets.QUARK_COOKIE }}  # 注入 Secrets
+        run: python sign.py
+
+      - name: Notify result
+        if: always()  # 无论成败都通知
+        uses: actions/notify@v1
+        with:
+          platform: wechat  # 集成 Server 酱等，需额外配置
+          token: ${{ secrets.PUSH_TOKEN }}
