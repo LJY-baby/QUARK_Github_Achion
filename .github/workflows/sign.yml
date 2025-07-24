@@ -24,9 +24,3 @@ jobs:
           QUARK_COOKIE: ${{ secrets.QUARK_COOKIE }}  # 注入 Secrets
         run: python sign.py
 
-      - name: Notify result
-        if: always()  # 无论成败都通知
-        uses: actions/notify@v1
-        with:
-          platform: wechat  # 集成 Server 酱等，需额外配置
-          token: ${{ secrets.PUSH_TOKEN }}
